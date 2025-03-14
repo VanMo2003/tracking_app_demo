@@ -1,0 +1,230 @@
+import 'dart:developer';
+
+import 'package:flutter/foundation.dart' as Foundation;
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../../../controllers/loading_controller.dart';
+import '../../../views/custom_snackbar.dart';
+import '../../widgets/text_field_widget.dart';
+import '../../../controllers/tracking_controller.dart';
+import '../../../helper/date_converter_hepler.dart';
+import '../../../helper/loading_helper.dart';
+import '../../../data/models/body/tracking.dart';
+import '../../../utils/color_resources.dart';
+import '../../../utils/dimensions.dart';
+import '../../../utils/language/key_language.dart';
+import '../../../utils/styles.dart';
+import '../../widgets/dialog_widget.dart';
+import 'button__tracking_widget.dart';
+
+class TrackingItem extends StatefulWidget {
+  const TrackingItem({super.key, required this.tracking});
+
+  final Tracking tracking;
+
+  @override
+  State<TrackingItem> createState() => _TrackingItemState();
+}
+
+class _TrackingItemState extends State<TrackingItem> {
+  ScrollController scrollController = ScrollController();
+  final TextEditingController contentController = TextEditingController();
+
+  RxBool isOpenMenu = false.obs;
+
+  @override
+  void initState() {
+    super.initState();
+    scrollController.addListener(
+      () {
+        if (scrollController.position.pixels > 70) {
+          isOpenMenu.value = true;
+        } else {
+          isOpenMenu.value = false;
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: Get.height * 0.1,
+      margin: const EdgeInsets.symmetric(
+          vertical: Dimensions.MARGIN_SIZE_EXTRA_SMALL,
+          horizontal: Dimensions.MARGIN_SIZE_DEFAULT),
+      padding: const EdgeInsets.symmetric(
+          vertical: Dimensions.MARGIN_SIZE_SMALL,
+          horizontal: Dimensions.MARGIN_SIZE_SMALL),
+      decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(Dimensions.RADIUS_SIZE_SMALL),
+          border: Border.all(
+            color: Theme.of(context).disabledColor.withOpacity(0.2),
+          ),
+          boxShadow: [
+            BoxShadow(
+              offset: const Offset(2.0, 2.0),
+              color: Theme.of(context).disabledColor.withOpacity(0.3),
+              blurRadius: 3,
+            ),
+          ]),
+      child: Stack(
+        children: [
+          SizedBox(
+            width: Get.width - 32.0,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.tracking.content == "string"
+                      ? KeyLanguage.trackingContent.tr
+                      : widget.tracking.content!,
+                  style: robotoBlack.copyWith(
+                      fontSize: Dimensions.FONT_SIZE_EXTRA_OVER_LARGE),
+                ),
+                const SizedBox(height: Dimensions.PADDING_SIZE_SMALL),
+                Text(
+                  widget.tracking.date != null
+                      ? DateConverter.convertTimeStampToString(widget.tracking.date!)
+                      : DateTime.now().toString(),
+                  style: robotoRegular.copyWith(),
+                ),
+              ],
+            ),
+          ),
+          SingleChildScrollView(
+            controller: scrollController,
+            scrollDirection: Axis.horizontal,
+            physics: const PageScrollPhysics(),
+            child: SizedBox(
+                width: Get.width - 32 + 40 + 40,
+                child: Obx(
+                  () {
+                    return Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            animateScroll(0.0);
+                            isOpenMenu.value = false;
+                          },
+                          child: Opacity(
+                            opacity: 0.0,
+                            child: Container(
+                              color: ColorResources.getWhiteColor(),
+                              width: isOpenMenu.value
+                                  ? Get.width - 32.0
+                                  : Get.width - 32.0 - 40,
+                            ),
+                          ),
+                        ),
+                        if (!isOpenMenu.value)
+                          ButtonTrackingWidget(
+                            onTap: () {
+                              animateScroll(80.0);
+                              isOpenMenu.value = true;
+                            },
+                            icon: Icons.swipe_left,
+                            color: Colors.grey.shade400,
+                          ),
+                        ButtonTrackingWidget(
+                          onTap: () {
+                            if (Foundation.kDebugMode) {
+                              log('onClick Delete');
+                            }
+                            showDialog(
+                              context: context,
+                              builder: (context) => dialogQuestionWidget(
+                                context,
+                                KeyLanguage.delete.tr,
+                                "${KeyLanguage.deleteQuestion.tr} công việc (${widget.tracking.content})?",
+                                () {
+                                  deleteTracking(widget.tracking);
+                                },
+                              ),
+                            );
+                          },
+                          icon: Icons.delete,
+                          color: Colors.red,
+                        ),
+                        ButtonTrackingWidget(
+                          onTap: () {
+                            if (Foundation.kDebugMode) {
+                              log('onClick Update');
+                              clickUpdate();
+                            }
+                          },
+                          icon: Icons.save_as_outlined,
+                          color: Colors.green,
+                        ),
+                      ],
+                    );
+                  },
+                )),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void updateTracking(
+      Tracking tracking, TextEditingController contentController) async {
+    Get.find<LoadingController>().loading(handle: () {
+      tracking.content = contentController.text;
+      Get.find<TrackingController>().updateTracking(tracking).then(
+            (value) {
+          if (value == 200) {
+            showCustomSnackBar(
+                "${KeyLanguage.updateSuccess.tr}  : ${tracking.content}",
+                isError: false);
+          }
+        },
+      );
+      contentController.clear();
+    });
+  }
+
+  void clickUpdate() {
+    contentController.text = widget.tracking.content!;
+    showDialog(
+      context: context,
+      builder: (context) {
+        return dialogUpdateWidget(
+          context,
+          child: TextFieldWidget(
+            autoFocus: true,
+            controller: contentController,
+            hintText: KeyLanguage.trackingContent.tr,
+          ),
+          opTap: () {
+            updateTracking(widget.tracking, contentController);
+          },
+        );
+      },
+    );
+  }
+
+  void deleteTracking(Tracking tracking) async {
+    Get.find<LoadingController>().loading(handle: () {
+      Get.find<TrackingController>().deleteTracking(tracking).then(
+            (value) {
+          if (value == 200) {
+            showCustomSnackBar(
+                "${KeyLanguage.deleteSuccess.tr}  : ${tracking.content}",
+                isError: false);
+          }
+        },
+      );
+    });
+
+    animateScroll(0.0);
+  }
+
+  Future<void> animateScroll(double offset) async {
+    await scrollController.animateTo(
+      offset,
+      duration: const Duration(milliseconds: 100),
+      curve: Curves.linear,
+    );
+  }
+}

@@ -1,0 +1,174 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../../controllers/loading_controller.dart';
+import '../../controllers/user_controller.dart';
+import '../../helper/validation_helper.dart';
+import '../widgets/dropdown_language_widget.dart';
+import '../widgets/switch_widget.dart';
+import '/controllers/auth_controller.dart';
+import '/helper/route_helper.dart';
+import '/utils/asset_util.dart';
+import '/utils/dimensions.dart';
+import '/utils/language/key_language.dart';
+import '../widgets/button_primary_widget.dart';
+
+import '../../helper/loading_helper.dart';
+import '../../utils/styles.dart';
+import '../../views/custom_loading.dart';
+import '../widgets/text_field_widget.dart';
+
+class SignInScreen extends StatefulWidget {
+  const SignInScreen({super.key});
+
+  @override
+  State<SignInScreen> createState() => _SignInScreenState();
+}
+
+class _SignInScreenState extends State<SignInScreen> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  final key = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    super.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    double top = MediaQuery.of(context).padding.top;
+    return Scaffold(
+      body: Stack(
+        children: [
+          Container(
+            height: size.height,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: const AssetImage(
+                  AssetUtil.backgroundLogin,
+                ),
+                opacity: Get.isDarkMode ? 0.3 : 1,
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: Center(
+              child: LoadingWidget(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
+                  child: Form(
+                    key: key,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          KeyLanguage.signIn.tr,
+                          style: robotoBlack.copyWith(
+                            fontSize: Dimensions.FONT_SIZE_TITLE_LARGE,
+                            color: Theme.of(context).disabledColor,
+                          ),
+                        ),
+                        const SizedBox(
+                            height:
+                                Dimensions.SIZE_BOX_HEIGHT_EXTRA_LARGE_OVER),
+                        TextFieldWidget(
+                          controller: _usernameController,
+                          labelText: KeyLanguage.username.tr,
+                          isPasswordField: false,
+                        ),
+                        TextFieldWidget(
+                          controller: _passwordController,
+                          labelText: KeyLanguage.password.tr,
+                          isPasswordField: true,
+                          validator: (value) {
+                            return ValidationHelper.validPassword(value);
+                          },
+                        ),
+                        const SizedBox(
+                            height:
+                                Dimensions.SIZE_BOX_HEIGHT_EXTRA_LARGE_OVER),
+                        ButtonPrimaryWidget(
+                          label: KeyLanguage.signIn.tr,
+                          onTap: () {
+                            login();
+                          },
+                        ),
+                        const SizedBox(
+                            height:
+                                Dimensions.SIZE_BOX_HEIGHT_EXTRA_LARGE_OVER *
+                                    2 /
+                                    3),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(KeyLanguage.questionSignUp.tr),
+                            const SizedBox(width: 5),
+                            GestureDetector(
+                              onTap: () async {
+                                Get.find<LoadingController>().loading(handle: ()
+                                {
+                                  Get.offNamed(RouteHelper.signUp);
+                                });
+                              },
+                              child: Text(
+                                KeyLanguage.signUp.tr,
+                                style: TextStyle(
+                                  color: Theme.of(context)
+                                      .primaryColor
+                                      .withOpacity(0.8),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: top,
+            left: Dimensions.PADDING_SIZE_LARGE,
+            child: const DropdownLangueWidget(),
+          ),
+          Positioned(
+            top: top,
+            right: Dimensions.PADDING_SIZE_LARGE,
+            child: const SwitchWidget(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void login() async {
+    String username = _usernameController.text;
+    String password = _passwordController.text;
+
+    if (key.currentState!.validate()) {
+      Get.find<LoadingController>().loading(handle: ()
+      {
+        Get.find<AuthController>().login(username, password).then(
+              (value) async {
+            if (value == 200) {
+              await Get.find<UserController>().getCurrentUser();
+              if (Get
+                  .find<UserController>()
+                  .isAdmin) {
+                Get.offAllNamed(RouteHelper.getHomeAdminRoute());
+              } else {
+                Get.offAllNamed(RouteHelper.getHomeUserRoute());
+              }
+            }
+          },
+        );
+      });
+    }
+  }
+}
