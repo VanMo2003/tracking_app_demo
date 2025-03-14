@@ -17,8 +17,11 @@ import 'theme/light_theme.dart';
 import 'utils/app_constant.dart';
 
 Future<void> main() async {
+
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+  await dotenv.load(fileName: "assets/config/.env");
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   if (GetPlatform.isMobile) {
@@ -35,7 +38,6 @@ Future<void> main() async {
     throw Exception(e.toString());
   }
 
-  await dotenv.load();
   await binding();
 
   runApp(const MyApp());

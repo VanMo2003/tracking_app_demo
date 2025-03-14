@@ -119,17 +119,17 @@ class NotificationHelper {
   static Future<String> getAccessToken() async {
     final serviceAccountJson =
     {
-      "type": dotenv.env['type'],
-      "project_id": dotenv.env['project_id'],
-      "private_key_id": dotenv.env['private_key_id'],
-      "private_key": dotenv.env['private_key'],
-      "client_email": dotenv.env['client_email'],
-      "client_id": dotenv.env['client_id'],
-      "auth_uri": dotenv.env['auth_uri'],
-      "token_uri": dotenv.env['token_uri'],
-      "auth_provider_x509_cert_url": dotenv.env['auth_provider_x509_cert_url'],
-      "client_x509_cert_url": dotenv.env['client_x509_cert_url'],
-      "universe_domain": dotenv.env['universe_domain']
+      "type": dotenv.env['TYPE'],
+      "project_id": dotenv.env['PROJECT_ID'],
+      "private_key_id": dotenv.env['PRIVATE_KEY_ID'],
+      "private_key": dotenv.env['PRIVATE_KEY'],
+      "client_email": dotenv.env['CLIENT_EMAIL'],
+      "client_id": dotenv.env['CLIENT_ID'],
+      "auth_uri": dotenv.env['AUTH_URI'],
+      "token_uri": dotenv.env['TOKEN_URI'],
+      "auth_provider_x509_cert_url": dotenv.env['AUTH_PROVIDER_X_CERT_URL'],
+      "client_x509_cert_url": dotenv.env['CLIENT_X_CERT_URL'],
+      "universe_domain": dotenv.env['UNIVERSE_DOMAIN']
     };
       List<String> scopes = [
         "https://www.googleapis.com/auth/userinfo.email",
