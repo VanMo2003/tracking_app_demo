@@ -28,30 +28,29 @@ class UserController extends GetxController implements GetxService {
       ApiException.checkException(response.statusCode, isRegistor: true);
     }
     update();
-    return response.statusCode!;
+    return response.statusCode ?? 0;
   }
 
   Future<int> getCurrentUser() async {
     Response response = await authRepo.getCurrentUser();
     if (response.statusCode == 200) {
       _user = UserRes.fromJson(response.body);
-        if (_user!.roles != null) {
-          if(_user!.roles!.isEmpty){
-            _isAdmin = true;
-          }else {
-            for (var element in _user!.roles!) {
-              if (element.id == 3) {
-                _isAdmin = true;
-              }
+      if (_user?.roles != null) {
+        if (_user?.roles == []) {
+          _isAdmin = true;
+        } else {
+          for (var element in _user?.roles ?? []) {
+            if (element.id == 3) {
+              _isAdmin = true;
             }
           }
         }
-
+      }
     } else {
       ApiException.checkException(response.statusCode);
     }
     update();
-    return response.statusCode!;
+    return response.statusCode ?? 0;
   }
 
   Future<int> updateMyself(UserRes userNew) async {
@@ -63,21 +62,23 @@ class UserController extends GetxController implements GetxService {
       ApiException.checkException(response.statusCode);
     }
     update();
-    return response.statusCode!;
+    return response.statusCode ?? 0;
   }
 
   void updateInfoUser(UserRes userNew) async {
     Response response = await authRepo.updateUserById(userNew);
     if (response.statusCode == 200) {
       if (Get.find<SearchByPageController>().listResult != null) {
-        for (var element in Get.find<SearchByPageController>().listResult!) {
+        for (var element in Get.find<SearchByPageController>().listResult ?? []) {
           if (element.id == userNew.id) {
             int index =
-            Get.find<SearchByPageController>().listResult!.indexOf(element);
-            Get.find<SearchByPageController>()
-              ..listResult![index] = userNew
-              ..update();
-            showCustomSnackBar(KeyLanguage.updateSuccess.tr, isError: false);
+                Get.find<SearchByPageController>().listResult?.indexOf(element) ?? -1;
+            if(index >= 0){
+              Get.find<SearchByPageController>()
+                ..listResult?[index] = userNew
+                ..update();
+              showCustomSnackBar(KeyLanguage.updateSuccess.tr, isError: false);
+            }
           }
         }
       }
@@ -105,7 +106,7 @@ class UserController extends GetxController implements GetxService {
     Response response = await authRepo.lock(id);
     if (response.statusCode == 200) {
       Get.find<SearchByPageController>()
-        ..listResult!.where((element) => element.id == id).first.active = false
+        ..listResult?.where((element) => element.id == id).first.active = false
         ..update();
     } else {
       ApiException.checkException(response.statusCode);

@@ -68,7 +68,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                                 Icons.image,
                                 size: 32,
                               ),
-                              SizedBox(width: Dimensions.PADDING_SIZE_SMALL),
+                              const SizedBox(width: Dimensions.PADDING_SIZE_SMALL),
                               Text(KeyLanguage.pickImage.tr)
                             ],
                           ),

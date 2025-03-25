@@ -29,7 +29,7 @@ class _ListUserItemState extends State<ListUserItem> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Opacity(
-      opacity: widget.user.active! ? 1 : 0.5,
+      opacity: widget.user.active ?? false ? 1 : 0.5,
       child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
@@ -57,8 +57,8 @@ class _ListUserItemState extends State<ListUserItem> {
             },
             child: CircleAvatar(
               radius: Dimensions.RADIUS_SIZE_LARGE,
-              backgroundImage: widget.user.image != null
-                  ? NetworkImage(AppConstant.URL_GET_IMAGE + widget.user.image!)
+              backgroundImage: widget.user.image != null && widget.user.image != ""
+                  ? NetworkImage(AppConstant.URL_GET_IMAGE + (widget.user.image!))
                   : const AssetImage(AssetUtil.avatar),
             ),
           ),
@@ -76,7 +76,7 @@ class _ListUserItemState extends State<ListUserItem> {
             style: robotoRegular.copyWith(fontSize: Dimensions.FONT_SIZE_LARGE),
             overflow: TextOverflow.ellipsis,
           ),
-          trailing: widget.user.active!
+          trailing: widget.user.active ?? false
               ? null
               : Icon(
                   Icons.lock,

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:get/get.dart';
 import '../data/models/body/tracking.dart';
 import '../data/repository/tracking_repo.dart';
@@ -21,10 +19,10 @@ class TrackingController extends GetxController implements GetxService {
   void getAllByUser() async {
     Response response = await trackingRepo.getAllByUser();
     if (response.statusCode == 200) {
-      _list = [];
+      _list ??= [];
       for (var element in response.body) {
         var tracking = Tracking.fromJson(element);
-        _list!.add(tracking);
+        _list?.add(tracking);
       }
     } else {
       ApiException.checkException(response.statusCode);
@@ -36,35 +34,35 @@ class TrackingController extends GetxController implements GetxService {
     Response response = await trackingRepo.addTracking(tracking);
     if (response.statusCode == 200) {
       var tracking = Tracking.fromJson(response.body);
-      _list!.add(tracking);
+      _list?.add(tracking);
     } else {
       ApiException.checkException(response.statusCode);
     }
     update();
 
-    return response.statusCode!;
+    return response.statusCode ?? 0;
   }
 
   Future<int> updateTracking(Tracking tracking) async {
     Response response = await trackingRepo.updateTracking(tracking);
     if (response.statusCode == 200) {
       var tracking = Tracking.fromJson(response.body);
-      _list!.removeWhere(
+      _list?.removeWhere(
         (element) => element.id == tracking.id,
       );
-      _list!.add(tracking);
+      _list?.add(tracking);
     } else {
       ApiException.checkException(response.statusCode);
     }
     update();
 
-    return response.statusCode!;
+    return response.statusCode ?? 0;
   }
 
   Future<int> deleteTracking(Tracking tracking) async {
     Response response = await trackingRepo.deleteTracking(tracking);
     if (response.statusCode == 200) {
-      _list!.removeWhere(
+      _list?.removeWhere(
         (element) => element.id == tracking.id,
       );
     } else {
@@ -72,15 +70,20 @@ class TrackingController extends GetxController implements GetxService {
     }
 
     update();
-    return response.statusCode!;
+    return response.statusCode ?? 0;
   }
 
   void sortByDateDesc() {
-    _list!.sort(
+    _list?.sort(
       (a, b) {
-        if (a.date!.compareTo(b.date ?? DateTime.now().millisecondsSinceEpoch) < 0) {
-          return 1;
+        if (a.date != null && b.date != null) {
+          if (a.date!
+                  .compareTo(b.date ?? DateTime.now().millisecondsSinceEpoch) <
+              0) {
+            return 1;
+          }
         }
+
         return -1;
       },
     );

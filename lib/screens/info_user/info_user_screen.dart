@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tracking_app_demo/controllers/user_controller.dart';
+import 'package:tracking_app_demo/views/custom_snackbar.dart';
 import '/controllers/auth_controller.dart';
 import '../../data/models/response/user_res.dart';
 import '/utils/color_resources.dart';
@@ -27,12 +28,7 @@ class _InfoUserScreenState extends State<InfoUserScreen> {
       ),
       body: GetBuilder<UserController>(
         builder: (controller) {
-          var user = controller.user;
-          if (user == null) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+          UserRes user = controller.user ?? UserRes();
           return Container(
             color: Theme.of(context).cardColor,
             child: Column(
@@ -102,7 +98,9 @@ class _InfoUserScreenState extends State<InfoUserScreen> {
 
                   Get.find<UserController>().updateMyself(user).then(
                     (value) {
-                      if (value == 200) {}
+                      if (value == 200) {
+                        showCustomSnackBar(KeyLanguage.updateSuccess.tr);
+                      }
                     },
                   );
                 },

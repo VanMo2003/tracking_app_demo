@@ -76,8 +76,8 @@ class _PostCommentWidgetState extends State<PostCommentWidget> {
                                   builder: (controller) {
                                     return CircleAvatar(
                                       radius: 20,
-                                      backgroundImage: comment.user!.image != null
-                                          ? NetworkImage(AppConstant.URL_GET_IMAGE + comment.user!.image!)
+                                      backgroundImage: comment.user?.image != null && comment.user?.image != ""
+                                          ? NetworkImage(AppConstant.URL_GET_IMAGE + (comment.user?.image ?? ""))
                                           : const AssetImage(AssetUtil.avatar),
                                     );
                                   }
@@ -100,7 +100,7 @@ class _PostCommentWidgetState extends State<PostCommentWidget> {
                                       ),
                                       children: [
                                         TextSpan(
-                                          text: comment.user!.displayName,
+                                          text: comment.user?.displayName,
                                         ),
                                         const TextSpan(text: "\n"),
                                         TextSpan(
@@ -143,7 +143,7 @@ class _PostCommentWidgetState extends State<PostCommentWidget> {
                               user: Get.find<UserController>().user,
                             );
                             Get.find<PostController>()
-                                .commentPost(widget.content.id!, body);
+                                .commentPost(widget.content.id ?? -1, body);
                             FocusScope.of(context).unfocus();
                             commentController.clear();
                           }

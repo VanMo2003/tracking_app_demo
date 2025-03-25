@@ -56,11 +56,11 @@ class PostController extends GetxController implements GetxService {
     if (response.statusCode == 200) {
       _contents ??= [];
       _posts = Posts.fromJson(response.body);
-      if (_posts!.last!) {
+      if (_posts?.last ?? true) {
         _last = true;
       }
-      for (var content in _posts!.content!)  {
-        _contents!.add(content);
+      for (var content in _posts?.content ?? [])  {
+        _contents?.add(content);
       }
     } else {
       ApiException.checkException(response.statusCode);
@@ -78,11 +78,11 @@ class PostController extends GetxController implements GetxService {
     if (response.statusCode == 200) {
       _contentsByUser ??= [];
       _postsByUser = Posts.fromJson(response.body);
-      if (_postsByUser!.last!) {
+      if (_postsByUser?.last ?? true) {
         _lastByUser = true;
       }
-      for (var element in _postsByUser!.content!) {
-        _contentsByUser!.add(element);
+      for (var element in _postsByUser?.content ?? []) {
+        _contentsByUser?.add(element);
       }
     } else {
       ApiException.checkException(response.statusCode);
@@ -95,12 +95,8 @@ class PostController extends GetxController implements GetxService {
     Response response = await postRepo.addContent(content);
     if (response.statusCode == 200) {
       var content = Content.fromJson(response.body["data"]);
-      if(_contentsByUser != null) {
-        _contentsByUser!.add(content);
-      }
-      if(_contents != null) {
-        _contents!.add(content);
-      }
+      _contentsByUser?.add(content);
+      _contents?.add(content);
       showCustomSnackBar(KeyLanguage.addSuccess.tr, isError: false);
     } else {
       ApiException.checkException(response.statusCode);
@@ -112,22 +108,13 @@ class PostController extends GetxController implements GetxService {
   void likePost(int id) async {
     Response response = await postRepo.likePost(id);
     if (response.statusCode == 200) {
-      if (_contents != [] && _contents != null) {
-        var content =
-            _contents!.where((element) => element.id == id).firstOrNull;
-        if (content != null) {
-          content.likes ??= [];
-          content.likes!.add(Likes.fromJson(response.body));
-        }
-      }
-      if (_contentsByUser != [] && _contentsByUser != null) {
-        var contentByUser =
-            _contentsByUser!.where((element) => element.id == id).firstOrNull;
-        if (contentByUser != null) {
-          contentByUser.likes ??= [];
-          contentByUser.likes!.add(Likes.fromJson(response.body));
-        }
-      }
+      Content? content = _contents?.where((element) => element.id == id).firstOrNull;
+      content?.likes ??= [];
+      content?.likes?.add(Likes.fromJson(response.body));
+
+      Content? contentByUser = _contentsByUser?.where((element) => element.id == id).firstOrNull;
+      contentByUser?.likes ??= [];
+      contentByUser?.likes?.add(Likes.fromJson(response.body));
     } else {
       ApiException.checkException(response.statusCode);
     }
@@ -138,23 +125,15 @@ class PostController extends GetxController implements GetxService {
   void commentPost(int id, Comments body) async {
     Response response = await postRepo.commentPost(id, body);
     if (response.statusCode == 200) {
-      if (_contents != []) {
-        var content =
-            _contents!.where((element) => element.id == id).firstOrNull;
-        if (content != null) {
-          content.comments ??= [];
-          content.comments!.add(Comments.fromJson(response.body));
-        }
-      }
+        Content? content =
+            _contents?.where((element) => element.id == id).firstOrNull;
+        content?.comments ??= [];
+        content?.comments?.add(Comments.fromJson(response.body));
 
-      if (_contentsByUser != []) {
-        var contentByUser =
-            _contentsByUser!.where((element) => element.id == id).firstOrNull;
-        if (contentByUser != null) {
-          contentByUser.comments ??= [];
-          contentByUser.comments!.add(Comments.fromJson(response.body));
-        }
-      }
+        Content? contentByUser =
+            _contentsByUser?.where((element) => element.id == id).firstOrNull;
+        contentByUser?.comments ??= [];
+        contentByUser?.comments!.add(Comments.fromJson(response.body));
     } else {
       ApiException.checkException(response.statusCode);
     }

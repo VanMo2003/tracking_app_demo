@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:tracking_app_demo/controllers/image_controller.dart';
-import '../../helper/notification_helper.dart';
 import '../tracking/tracking_screen.dart';
 import '/controllers/auth_controller.dart';
-import '/controllers/search_controller.dart';
 import '/utils/dimensions.dart';
 import '/utils/asset_util.dart';
 import '/utils/language/key_language.dart';
-import '../../controllers/post_controller.dart';
 import '../list_user/list_user_screen.dart';
 import '../../views/custom_loading.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';

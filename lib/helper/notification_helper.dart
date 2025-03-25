@@ -96,24 +96,10 @@ class NotificationHelper {
     }
   }
 
-  static Future getDeviceToken() async {
+  static Future<String?> getDeviceToken() async {
     final token = await _firebaseMessaging.getToken();
-    log('device token : $token');
-    if (Get.find<UserController>().user != null) {
-      await FirebaseService.saveUserToken(token!);
-      log('save to firestore');
-    }
 
-
-    // also save if token changes
-    _firebaseMessaging.onTokenRefresh.listen(
-      (event) async {
-        if (Get.find<UserController>().user != null) {
-          await FirebaseService.saveUserToken(token!);
-          log('save to firestore');
-        }
-      },
-    );
+    return token;
   }
 
   static Future<String> getAccessToken() async {

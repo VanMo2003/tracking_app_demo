@@ -26,7 +26,7 @@ class ButtonAnimated extends AnimatedWidget {
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
       onPressed: () {
-        Get.find<PostController>().likePost(content.id!);
+        Get.find<PostController>().likePost(content.id ?? -1);
         controller.forward();
       },
       icon: Icon(
@@ -34,7 +34,7 @@ class ButtonAnimated extends AnimatedWidget {
         color: colorTween.evaluate(animation),
       ),
       label: Text(
-        "${KeyLanguage.like.tr} (${content.likes == null ? 0 : content.likes!.length})",
+        "${KeyLanguage.like.tr} (${content.likes == null ? 0 : content.likes?.length})",
         style: robotoBold.copyWith(
           color: Theme.of(context).disabledColor,
         ),

@@ -41,13 +41,14 @@ class NotificationController extends GetxController implements GetxService {
     }
     update();
 
-    return response.statusCode!;
+    return response.statusCode ?? 0;
   }
 
   void sortByDateDesc() {
     _notifications!.sort(
-          (a, b) {
-        if (a.date!.compareTo(b.date ?? DateTime.now().millisecondsSinceEpoch) < 0) {
+      (a, b) {
+        if (a.date!.compareTo(b.date ?? DateTime.now().millisecondsSinceEpoch) <
+            0) {
           return 1;
         }
         return -1;

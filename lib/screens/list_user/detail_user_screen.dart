@@ -48,11 +48,10 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
                   decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,
                     image: DecorationImage(
-                      image: widget._user.image != null
+                      image: widget._user.image != null && widget._user.image != ""
                           ? NetworkImage(AppConstant.URL_GET_IMAGE + widget._user.image!)
                           : const AssetImage(AssetUtil.image),
                       fit: BoxFit.cover,
-                      scale: 0.3,
                     ),
                   ),
                 ),
@@ -81,7 +80,7 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
                     Text(
                       widget._user.firstName == null || widget._user.lastName == null
                           ? KeyLanguage.fullName.tr
-                          : "(${widget._user.firstName}${widget._user.lastName ?? " và tên"})",
+                          : "(${widget._user.firstName ?? "họ"}${widget._user.lastName ?? " và tên"})",
                       style: robotoBold.copyWith(
                         fontSize: Dimensions.FONT_SIZE_OVER_OVER_LARGE,
                         color: Theme.of(context).disabledColor,
@@ -113,7 +112,7 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
                           fontSize: Dimensions.FONT_SIZE_EXTRA_LARGE),
                     ),
                     Text(
-                      "${KeyLanguage.status.tr} : ${widget._user.active! ? KeyLanguage.active.tr : KeyLanguage.noActive.tr}",
+                      "${KeyLanguage.status.tr} : ${widget._user.active ?? false ? KeyLanguage.active.tr : KeyLanguage.noActive.tr}",
                       style: robotoBlack.copyWith(
                           fontSize: Dimensions.FONT_SIZE_EXTRA_LARGE,
                           color: widget._user.active!
@@ -140,7 +139,7 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
                             const SizedBox(
                                 width: Dimensions.PADDING_SIZE_DEFAULT),
                             Expanded(
-                              child: widget._user.active!
+                              child: widget._user.active ?? false
                                   ? ButtonDrawerWidget(
                                       onTap: () {
                                         lock(context);
@@ -181,9 +180,9 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
     showDialog(
       context: context,
       builder: (context) {
-        displayNameController.text = widget._user.displayName!;
-        birthPlaceController.text = widget._user.birthPlace ?? "Hà Nội";
-        universityController.text = widget._user.university ?? "Oceantech";
+        displayNameController.text = widget._user.displayName ?? "";
+        birthPlaceController.text = widget._user.birthPlace ?? AppConstant.birthPlaces[0];
+        universityController.text = widget._user.university ?? "";
         dateOfBirthController.text = DateConverter.dateTimeStringToDateOnly(
             widget._user.dob ?? DateTime.now().toString());
         return dialogUpdateWidget(
@@ -240,7 +239,7 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
         "${KeyLanguage.lockQuestion.tr} (${widget._user.displayName})?",
         () async {
           Get.find<LoadingController>().loading(handle: () async {
-            Get.find<UserController>().lock(widget._user.id!).then(
+            Get.find<UserController>().lock(widget._user.id ?? -1).then(
                   (value) {
                 if (value == 200) {
                   showCustomSnackBar(

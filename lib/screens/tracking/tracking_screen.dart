@@ -8,7 +8,6 @@ import '/controllers/tracking_controller.dart';
 import '/utils/dimensions.dart';
 import '/utils/language/key_language.dart';
 
-import '../../../helper/loading_helper.dart';
 import '../../../data/models/body/tracking.dart';
 
 import 'widgets/tracking_item.dart';
@@ -42,7 +41,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
                 child: CircularProgressIndicator(),
               );
             }
-            List<Tracking> list = controller.list!;
+            List<Tracking> list = controller.list ?? [];
 
             if (list.isEmpty) {
               return Center(
@@ -51,12 +50,15 @@ class _TrackingScreenState extends State<TrackingScreen> {
             }
 
             return Padding(
-              padding: const EdgeInsets.only(top: Dimensions.PADDING_SIZE_DEFAULT),
+              padding:
+                  const EdgeInsets.only(top: Dimensions.PADDING_SIZE_DEFAULT),
               child: ListView.builder(
                 itemCount: list.length + 1,
                 itemBuilder: (context, index) {
-                  if(index == list.length){
-                    return Container(height: Get.height * 0.06,);
+                  if (index == list.length) {
+                    return Container(
+                      height: Get.height * 0.06,
+                    );
                   }
                   var tracking = list[index];
                   return TrackingItem(
@@ -103,21 +105,16 @@ class _TrackingScreenState extends State<TrackingScreen> {
   }
 
   void addTracking() async {
-    Get.find<LoadingController>().loading(handle: ()
-    {
-      var userCurrent = Get
-          .find<UserController>()
-          .user;
+    Get.find<LoadingController>().loading(handle: () {
+      var userCurrent = Get.find<UserController>().user;
       Tracking tracking = Tracking(
         content: contentController.text,
-        date: DateTime
-            .now()
-            .millisecondsSinceEpoch,
+        date: DateTime.now().millisecondsSinceEpoch,
         user: userCurrent,
       );
 
       Get.find<TrackingController>().addTracking(tracking).then(
-            (value) {
+        (value) {
           if (value == 200) {
             showCustomSnackBar(
                 "${KeyLanguage.addSuccess.tr} : ${tracking.content}",

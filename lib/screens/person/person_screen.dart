@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:googleapis/keep/v1.dart';
 import 'package:tracking_app_demo/controllers/loading_controller.dart';
+import 'package:tracking_app_demo/data/models/response/user_res.dart';
 import '../../controllers/user_controller.dart';
 import '/controllers/auth_controller.dart';
 import '../../theme/theme_controller.dart';
@@ -25,7 +27,7 @@ class _PersonScreenState extends State<PersonScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: GetBuilder<UserController>(builder: (controller) {
-        var user = controller.user!;
+        UserRes user = controller.user ?? UserRes();
         return Container(
           padding: const EdgeInsets.symmetric(
             horizontal: Dimensions.PADDING_SIZE_EXTRA_LARGE,

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/foundation.dart' as Foundation;
-import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
 import '../models/response/error_res.dart';
@@ -105,11 +104,9 @@ class ApiClient extends GetxService {
           Http.MultipartRequest('POST', Uri.parse(urlBase + uri));
       _request.headers.addAll(headers ?? _mainHeaders);
       if (multipartBody.file != null) {
-        Uint8List _list = await multipartBody.file!.readAsBytes();
-        _request.files.add(Http.MultipartFile(
+        _request.files.add(Http.MultipartFile.fromBytes(
           multipartBody.key,
-          multipartBody.file!.readAsBytes().asStream(),
-          _list.length,
+          multipartBody.file!.readAsBytesSync(),
           filename: filename,
         ));
       }

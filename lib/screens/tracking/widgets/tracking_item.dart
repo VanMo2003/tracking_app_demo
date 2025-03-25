@@ -8,7 +8,6 @@ import '../../../views/custom_snackbar.dart';
 import '../../widgets/text_field_widget.dart';
 import '../../../controllers/tracking_controller.dart';
 import '../../../helper/date_converter_hepler.dart';
-import '../../../helper/loading_helper.dart';
 import '../../../data/models/body/tracking.dart';
 import '../../../utils/color_resources.dart';
 import '../../../utils/dimensions.dart';
@@ -185,7 +184,7 @@ class _TrackingItemState extends State<TrackingItem> {
   }
 
   void clickUpdate() {
-    contentController.text = widget.tracking.content!;
+    contentController.text = widget.tracking.content ?? "";
     showDialog(
       context: context,
       builder: (context) {

@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -85,7 +84,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           radius: Dimensions.RADIUS_SIZE_EXTRA_EXTRA_LARGE,
                           backgroundColor: Theme.of(context).cardColor,
                           backgroundImage: user.image != null
-                              ? NetworkImage(AppConstant.URL_GET_IMAGE + user.image!)
+                              ? NetworkImage(
+                                  AppConstant.URL_GET_IMAGE + user.image!)
                               : AssetImage(AssetUtil.avatar),
                         ),
                       ),
@@ -187,7 +187,6 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                             Get.find<UserController>().checkIn();
                             closeDrawer();
                           });
-
                         },
                         label: KeyLanguage.attendance.tr,
                         icon: Image.asset(
@@ -247,15 +246,15 @@ class _DrawerWidgetState extends State<DrawerWidget> {
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (resultImage == null) return;
 
-
     selectedFile = File(resultImage.path);
 
-    MultipartBody multipartBody = MultipartBody(
-      file: selectedFile
-    );
+    MultipartBody multipartBody = MultipartBody(file: selectedFile);
     String fileName = "${DateTime.now()}.png";
-    Get.find<LoadingController>().loading(handle: () {
-      Get.find<ImageController>().uploadImage(multipartBody, fileName, isAvatar: true);
-    },);
+    Get.find<LoadingController>().loading(
+      handle: () {
+        Get.find<ImageController>()
+            .uploadImage(multipartBody, fileName, isAvatar: true);
+      },
+    );
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tracking_app_demo/data/models/response/user_res.dart';
+import 'package:tracking_app_demo/helper/notification_helper.dart';
 import '../../controllers/loading_controller.dart';
 import '../../controllers/user_controller.dart';
 import '../../helper/validation_helper.dart';
@@ -158,6 +160,18 @@ class _SignInScreenState extends State<SignInScreen> {
               (value) async {
             if (value == 200) {
               await Get.find<UserController>().getCurrentUser();
+
+              NotificationHelper.getDeviceToken().then((value) {
+                if(value != null){
+                  UserRes userRes = Get.find<UserController>().user!.copyWith(
+                      tokenDevice: value
+                  );
+
+                  debugPrint("update device token : $value");
+                  Get.find<UserController>().updateMyself(userRes);
+                }
+              },);
+
               if (Get
                   .find<UserController>()
                   .isAdmin) {

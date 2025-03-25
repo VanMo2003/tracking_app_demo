@@ -36,7 +36,7 @@ class ImageController extends GetxController implements GetxService {
       ApiException.checkException(response.statusCode);
     }
 
-    return response.statusCode!;
+    return response.statusCode ?? 0;
 
   }
 
@@ -51,7 +51,7 @@ class ImageController extends GetxController implements GetxService {
       ApiException.checkException(response.statusCode);
     }
 
-    return response.statusCode!;
+    return response.statusCode ?? 0;
   }
 
   changeImage(Uint8List image) {

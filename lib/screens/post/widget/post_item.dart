@@ -61,7 +61,7 @@ class _PostItemState extends State<PostItem> with TickerProviderStateMixin {
             children: [
               CircleAvatar(
                 radius: Dimensions.RADIUS_EXTRA_LARGE_OVER,
-                backgroundImage: widget.content.user!.image != null
+                backgroundImage: widget.content.user?.image != null && widget.content.user?.image != ""
                     ? NetworkImage(AppConstant.URL_GET_IMAGE + widget.content.user!.image!)
                     : const AssetImage(AssetUtil.avatar),
               ),
@@ -71,7 +71,7 @@ class _PostItemState extends State<PostItem> with TickerProviderStateMixin {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.content.user!.displayName!,
+                      widget.content.user?.displayName ?? KeyLanguage.displayName.tr,
                       style: robotoBold.copyWith(
                         fontSize: 20,
                         color: Theme.of(context).disabledColor,
@@ -103,14 +103,14 @@ class _PostItemState extends State<PostItem> with TickerProviderStateMixin {
               vertical: Dimensions.PADDING_SIZE_EXTRA_SMALL,
             ),
             child: Text(
-              widget.content.content!,
+              widget.content.content ?? KeyLanguage.content.tr,
               style: robotoBold.copyWith(
                 fontSize: Dimensions.FONT_SIZE_OVER_LARGE,
                 color: Theme.of(context).disabledColor,
               ),
             ),
           ),
-          if (widget.content.id! % 2 != 0) ...[
+          if ((widget.content.id ?? 0) % 2 != 0) ...[
             Container(
               height: 300,
               width: double.maxFinite,
@@ -151,7 +151,7 @@ class _PostItemState extends State<PostItem> with TickerProviderStateMixin {
                   color: ColorResources.getBlackColor(),
                 ),
                 label: Text(
-                  "${KeyLanguage.comment.tr} (${widget.content.comments == null ? 0 : widget.content.comments!.length})",
+                  "${KeyLanguage.comment.tr} (${widget.content.comments?.length ?? 0})",
                   style: robotoBold.copyWith(
                     color: Theme.of(context).disabledColor,
                   ),

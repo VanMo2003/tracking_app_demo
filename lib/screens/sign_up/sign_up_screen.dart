@@ -41,11 +41,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.user != null) {
-      _usernameController.text = widget.user!.username!;
-      _passwordController.text = widget.user!.password!;
-      _confirmPasswordController.text = widget.user!.confirmPassword!;
-    }
+      _usernameController.text = widget.user?.username ?? "";
+      _passwordController.text = widget.user?.password ?? "";
+      _confirmPasswordController.text = widget.user?.confirmPassword ?? "";
   }
 
   @override
@@ -168,25 +166,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
         if (widget.user == null) {
           Get.offAll(EnterInfoScreen(username: username, password: password));
         } else {
-          widget.user = widget.user!.copyWith(
+          widget.user = widget.user?.copyWith(
             username: username,
             password: password,
             confirmPassword: confirmPassword,
           );
-          Get.find<UserController>().registor(widget.user!).then(
+
+          Get.find<UserController>().registor(widget.user ?? UserRes()).then(
                 (value) {
               if (value == 200) {
-                Get.find<AuthController>()
-                    .login(widget.user!.username!, widget.user!.password!)
-                    .then(
-                      (value) {
-                    if (value == 200) {
-                      Get.offAllNamed(RouteHelper.getHomeUserRoute());
-                      showCustomSnackBar(KeyLanguage.registorSuccess.tr,
-                          isError: false);
-                    }
-                  },
-                );
+                showCustomSnackBar(KeyLanguage.registorSuccess.tr,
+                    isError: false);
+                Get.offAllNamed(RouteHelper.getSignInRoute());
               }
             },
           );

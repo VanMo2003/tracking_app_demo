@@ -111,7 +111,7 @@ class _PostScreenState extends State<PostScreen> {
             }
           }
 
-          List<Content> contents = isAll ? controller.contents! : controller.contentsByUser!;
+          List<Content> contents = isAll ? controller.contents ?? [] : controller.contentsByUser ?? [];
           int length = 0;
           if (id == "") {
             length = controller.last ? contents.length : contents.length + 1;

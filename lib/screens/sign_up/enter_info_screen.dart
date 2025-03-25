@@ -250,7 +250,7 @@ class _EnterInfoScreenState extends State<EnterInfoScreen> {
             lastName: lastName,
             university: university,
             birthPlace: selectedBirthPlace,
-            gender: _character!.gender,
+            gender: _character?.gender,
             dob: DateConverter.convertDateToTimestamp("2003-09-03"),
             roles: [],
           );
